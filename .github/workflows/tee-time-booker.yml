@@ -48,3 +48,10 @@ jobs:
           GMAIL_USER:           ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD:   ${{ secrets.GMAIL_APP_PASSWORD }}
         run: python tee_time_booker_1.py
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        if: cancelled() || success() # Runs if cancelled or if successful
+        with:
+          name: build-output
+          path: dist/
