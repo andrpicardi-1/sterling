@@ -1,0 +1,50 @@
+# .github/workflows/tee-time-booker.yml
+#
+# Runs every Saturday at 9:55 AM UTC = 5:55 AM ET (DST) / 4:55 AM ET (EST)
+# Adjust the cron to match your exact target day + timezone offset.
+#
+# UTC offsets:
+#   ET (EDT, Mar–Nov): UTC-4  →  5:00 AM ET = 09:00 UTC
+#   ET (EST, Nov–Mar): UTC-5  →  5:00 AM ET = 10:00 UTC
+#
+# The script itself waits until exactly 5:00 AM ET internally,
+# so schedule the Action to start a few minutes early.
+
+name: Book Tee Time
+
+on:
+  schedule:
+    # Runs every Saturday at 09:55 UTC (= 5:55 AM EDT).
+    # Change 6 → 0 for Sunday, remove schedule and use workflow_dispatch for manual runs.
+    - cron: "55 8 * * 6"
+
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  book:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install playwright python-dotenv pytz
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Run tee time booker
+        env:
+          STERLING_USERNAME:    ${{ secrets.STERLING_USERNAME }}
+          STERLING_PASSWORD:    ${{ secrets.STERLING_PASSWORD }}
+          GMAIL_USER:           ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD:   ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: python tee_time_booker.py
