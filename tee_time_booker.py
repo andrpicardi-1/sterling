@@ -36,7 +36,7 @@ from email.mime.text import MIMEText
 load_dotenv()
 
 BOOKING_URL    = "https://sterling.chelseareservations.com/mobile/golf/BookingNewm.aspx"
-LOGIN_URL      = "https://sterling.chelseareservations.com/mobile/golf/LoginM.aspx"
+LOGIN_URL      = "https://sterling.chelseareservations.com/golf/bookingadmin.aspx"
 
 USERNAME       = os.environ["STERLING_USERNAME"]
 PASSWORD       = os.environ["STERLING_PASSWORD"]
