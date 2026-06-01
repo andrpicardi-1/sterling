@@ -14,7 +14,6 @@ On site outage: retries every 30 seconds for up to 5 minutes.
 On any failure: saves a screenshot and sends failure SMS.
 
 Setup:
-  pip install playwright twilio python-dotenv pytz
   playwright install chromium
 """
 
@@ -27,7 +26,6 @@ from pathlib import Path
 import pytz
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
-from twilio.rest import Client as TwilioClient
 
 # ---------------------------------------------------------------------------
 # Config
@@ -40,10 +38,6 @@ LOGIN_URL      = "https://sterling.chelseareservations.com/mobile/golf/LoginM.as
 USERNAME       = os.environ["STERLING_USERNAME"]
 PASSWORD       = os.environ["STERLING_PASSWORD"]
 
-TWILIO_SID     = os.environ["TWILIO_ACCOUNT_SID"]
-TWILIO_TOKEN   = os.environ["TWILIO_AUTH_TOKEN"]
-TWILIO_FROM    = os.environ["TWILIO_FROM_NUMBER"]   # e.g. +12035550100
-ALERT_TO       = os.environ["ALERT_PHONE_NUMBER"]   # e.g. +19175550100
 
 EASTERN        = pytz.timezone("America/New_York")
 RELEASE_HOUR   = 5       # 5:00 AM ET
@@ -91,13 +85,6 @@ log = logging.getLogger(__name__)
 # Helpers
 # ---------------------------------------------------------------------------
 
-def send_sms(message: str) -> None:
-    try:
-        client = TwilioClient(TWILIO_SID, TWILIO_TOKEN)
-        client.messages.create(body=message, from_=TWILIO_FROM, to=ALERT_TO)
-        log.info("SMS sent: %s", message)
-    except Exception as exc:
-        log.error("SMS failed: %s", exc)
 
 
 def screenshot(page, label: str) -> str:
